@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cookie Clicker</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            transition: background-color 1s ease; /* Smooth transition for background color change */
+            position: relative;
+        }
+        .input-container {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        .input-container label {
+            margin-right: 10px;
+        }
+        #cookieName {
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        .button-container {
+            margin-top: 10px;
+        }
+        .button-container button {
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-right: 10px;
+            transition: background-color 0.3s;
+        }
+        .button-container button:hover {
+            background-color: #45a049;
+        }
+        #reset-btn {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            padding: 8px 16px;
+            font-size: 14px;
+            background-color: #f44336;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        #reset-btn:hover {
+            background-color: #d32f2f;
+        }
+        #cookie {
+            width: 200px;
+            height: 200px;
+            background-image: url('https://i.ibb.co/7X4py45/download-1.png'); /* Replace 'your_custom_image_url_here' with your image URL */
+            background-size: cover;
+            border-radius: 50%; /* Make it round */
+            margin-bottom: 20px;
+            transition: transform 0.1s; /* Smooth transition */
+        }
+        #cookie:hover {
+            cursor: pointer;
+            transform: scale(1.05); /* Scale up on hover */
+        }
+        #cookie.clicked {
+            animation: clickEffect 0.2s ease; /* Animation effect */
+        }
+        @keyframes clickEffect {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+            100% { transform: scale(1); }
+        }
+        #cookies {
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+        #shop {
+            text-align: center; /* Center the content */
+            margin-bottom: 20px; /* Add some bottom margin for spacing */
+        }
+        #shop h2 {
+            margin-bottom: 10px; /* Add margin below the header */
+        }
+        .boost-btn {
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        .boost-btn:hover {
+            background-color: #45a049;
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.4);
+        }
+        .modal-content {
+            background-color: #fefefe;
+            margin: 15% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+            border-radius: 10px;
+        }
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+        .close:hover,
+        .close:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+        .modal-header {
+            text-align: center;
+            margin-bottom: 15px;
+        }
+        .modal-input {
+            display: block;
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-sizing: border-box;
+            font-size: 16px;
+        }
+        .modal-btn {
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            margin-right: 10px;
+        }
+        .modal-btn:hover {
+            background-color: #45a049;
+        }
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: black;
+            opacity: 0; /* Initially transparent */
+            transition: opacity 1s ease; /* Fade-in transition */
+            z-index: 999; /* Ensure it's above everything */
+        }
+        .cookie-boost {
+            position: absolute;
+            width: 50px;
+            height: 50px;
+            background-image: url('https://i.ibb.co/7X4py45/download-1.png'); /* Replace 'your_custom_image_url_here' with your image URL */
+            background-size: cover;
+            border-radius: 50%; /* Make it round */
+            opacity: 0; /* Initially transparent */
+            transition: opacity 1s ease; /* Fade-in transition */
+            z-index: 1000; /* Ensure it's above everything */
+        }
+        .popup {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background-color: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 5px;
+            font-size: 16px;
+            display: none;
+        }
+        .achievements {
+            margin-top: 20px;
+            text-align: middle; /* Align text to the left */
+        }
+        .achievement {
+            margin-bottom: 10px;
+            padding: 10px;
+            background-color: #f0f0f0;
+            border-radius: 5px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Add a subtle shadow */
+        }
+        .achievement-text {
+            flex-grow: 1; /* Let the text occupy remaining space */
+        }
+        .completed {
+            color: green;
+        }
+        .uncompleted {
+            color: red;
+        }
+    </style>
+</head>
+<body>
+    <!-- Your HTML content here -->
+    <button id="reset-btn" onclick="resetData()">Reset Data</button>
+    <h1>Knock Off Cookie Clicker</h1>
+    <div class="input-container">
+        <label for="cookieName">Enter your cookie name:</label>
+        <input type="text" id="cookieName" placeholder="Cookie Name" oninput="nameInput()">
+    </div>
+    <div class="button-container">
+        <button onclick="setCookieName()">Set Name</button>
+        <button onclick="changeCookieName()">Change Name</button>
+    </div>
+    <p id="cookies">Cookies: <span id="cookieCount">0</span></p>
+    <div id="cookie" onclick="clickCookie()"></div>
+    <div id="shop">
+        <h2>Shop</h2>
+        <button class="boost-btn" onclick="buyBoost(1)">Buy Boost 1 (+1 per click) - Cost: 10 cookies</button>
+        <button class="boost-btn" onclick="buyBoost(2)">Buy Boost 2 (+2 per click) - Cost: 20 cookies</button>
+        <button class="boost-btn" onclick="buyBoost(3)">Buy Boost 3 (+3 per click) - Cost: 30 cookies</button>
+        <button class="boost-btn" onclick="buyHugeBoost()">Buy Huge Boost (+10,000 per click) - Cost: 1,000,000 cookies</button>
+        <button class="boost-btn" onclick="buyAutoclicker()">Buy Autoclicker (Clicks once every 3 seconds) - Cost: 1,000 cookies</button>
+    </div>
+    <div id="myModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <div class="modal-header">
+                <h2>Set Cookies</h2>
+            </div>
+            <div class="modal-body">
+                <input type="number" id="cookieAmount" class="modal-input" placeholder="Enter cookies amount">
+                <button class="modal-btn" onclick="setCookies()">Set Cookies</button>
+            </div>
+        </div>
+    </div>
+    <div class="popup" id="popup"></div>
+    <div class="achievements">
+        <h2>Achievements</h2>
+        <div class="achievement" id="achievement1">
+            Collect 1 million cookies: <span class="status uncompleted">Uncompleted</span>
+        </div>
+    </div>
+    <script>
+        let cookies;
+        let clickValue = 1;
+        let specialEventTriggered = false; // Flag to track if the special event has been triggered
+        let cookieName = localStorage.getItem('cookieName') || ""; // Load cookie name from local storage
+        let hasInfiniteCookies = localStorage.getItem('hasInfiniteCookies') === 'true';
+        let autoclickerCount = parseInt(localStorage.getItem('autoclickerCount')) || 0;
+        let autoclickerIntervals = [];
+        let overlay = document.createElement('div'); // Create an overlay element
+        overlay.className = 'overlay'; // Set class for styling
+
+        // Function to update cookies and store them as string
+        function updateCookies() {
+            localStorage.setItem('cookies', cookies.toString()); // Store cookies as a string
+            document.getElementById('cookieCount').innerText = cookies.toLocaleString(); // Update cookie count display
+            checkAchievements(); // Check if achievements are completed
+        }
+
+        // Load cookies and boosts from local storage
+        window.onload = function() {
+            if (!isNaN(parseInt(localStorage.getItem('cookies')))) {
+                cookies = parseInt(localStorage.getItem('cookies')) || 0; // Parse cookies back to integer
+            } else {
+                cookies = 0;
+            }
+            clickValue = parseInt(localStorage.getItem('clickValue')) || 1;
+            updateCookies();
+            updateNameField(); // Update input field state
+            if (hasInfiniteCookies) {
+                cookies = Infinity;
+                updateCookies();
+            }
+            startAllAutoclickers();
+            spawnCookies(); // Start spawning cookies
+        }
+
+        // Function to trigger a special event
+        function triggerSpecialEvent() {
+            specialEventTriggered = true; // Set the flag to true
+            document.body.style.backgroundColor = 'gold'; // Change background color to gold
+            setTimeout(() => {
+                document.body.style.backgroundColor = ''; // Reset background color after 3 seconds
+            }, 3000);
+        }
+
+        function clickCookie() {
+            cookies += clickValue;
+            updateCookies();
+            document.getElementById('cookie').classList.add('clicked'); // Add animation class
+            setTimeout(() => {
+                document.getElementById('cookie').classList.remove('clicked'); // Remove animation class after 0.2s
+            }, 200);
+
+            // Check if special event should trigger
+            if (cookies >= 1000000 && !specialEventTriggered) {
+                triggerSpecialEvent();
+            }
+        }
+
+        function buyBoost(boost) {
+            let cost = boost * 10;
+            if (cookies >= cost) {
+                clickValue += boost;
+                cookies -= cost;
+                updateCookies();
+                localStorage.setItem('clickValue', clickValue);
+            } else {
+                alert("Not enough cookies!");
+            }
+        }
+
+        function buyHugeBoost() {
+            if (cookies >= 1000000) {
+                clickValue += 10000;
+                cookies -= 1000000;
+                updateCookies();
+                localStorage.setItem('clickValue', clickValue);
+            } else {
+                alert("Not enough cookies!");
+            }
+        }
+
+        function buyAutoclicker() {
+            let cost = 1000;
+            if (cookies >= cost) {
+                cookies -= cost;
+                updateCookies();
+                buyNewAutoclicker();
+            } else {
+                alert("Not enough cookies!");
+            }
+        }
+
+        function buyNewAutoclicker() {
+            autoclickerCount++;
+            localStorage.setItem('autoclickerCount', autoclickerCount);
+            startAutoclicker();
+        }
+
+        function startAllAutoclickers() {
+            for (let i = 0; i < autoclickerCount; i++) {
+                startAutoclicker();
+            }
+        }
+
+        function startAutoclicker() {
+            let interval = setInterval(clickCookie, 3000);
+            autoclickerIntervals.push(interval);
+        }
+
+        function stopAllAutoclickers() {
+            autoclickerIntervals.forEach(interval => clearInterval(interval));
+            autoclickerIntervals = [];
+        }
+
+        function stopAutoclicker() {
+            clearInterval(autoclickerIntervals.pop());
+        }
+
+        function setCookieName() {
+            cookieName = document.getElementById('cookieName').value; // Get the value from input field
+            if (cookieName === "JackPlsGiveMeInfCookie") {
+                openModal();
+                document.getElementById('cookieName').disabled = true;
+            } else {
+                localStorage.setItem('hasInfiniteCookies', false);
+                localStorage.setItem('cookieName', cookieName); // Save cookie name to local storage
+                updateNameField(); // Update input field state
+            }
+        }
+
+        function changeCookieName() {
+            cookieName = ""; // Clear the cookie name
+            document.getElementById('cookieName').value = ""; // Clear the input field
+            localStorage.removeItem('cookieName'); // Remove cookie name from local storage
+            localStorage.removeItem('hasInfiniteCookies');
+            updateNameField(); // Update input field state
+            alert("Cookie name cleared!");
+        }
+
+        function updateNameField() {
+            // Enable or disable input field based on whether the name is set
+            document.getElementById('cookieName').value = cookieName;
+            document.getElementById('cookieName').disabled = cookieName !== "";
+        }
+
+        function nameInput() {
+            // Enable the change name button if there is text in the input field
+            document.querySelector('button:nth-of-type(2)').disabled = document.getElementById('cookieName').value === "";
+        }
+
+        function resetData() {
+            // Create overlay element
+            const overlay = document.createElement('div');
+            overlay.classList.add('overlay');
+
+            // Append overlay to body
+            document.body.appendChild(overlay);
+
+            // Set opacity to fully opaque after a short delay
+            setTimeout(() => {
+                overlay.style.opacity = '1'; // Set opacity to fully opaque
+                overlay.style.transition = 'opacity 1s ease'; // Set transition effect for opacity
+            }, 100); // Wait 100 milliseconds before setting opacity to fully opaque
+
+            // Ask for confirmation
+            if (confirm("Are you sure you want to reset all your data? This action cannot be undone.")) {
+                localStorage.clear();
+                cookies = 0;
+                clickValue = 1;
+                cookieName = "";
+                autoclickerCount = 0;
+                updateCookies();
+                updateNameField();
+                stopAllAutoclickers(); // Stop all autoclickers
+
+
+                setTimeout(() => {
+                    overlay.style.opacity = '0'; // Fade out overlay
+                    setTimeout(() => {
+                        overlay.remove(); // Remove overlay
+                        alert("Data reset successful!");
+                    }, 1000); // Wait 1 second before removing overlay
+                }, 1000); // Wait 1 second before fading out
+            } else {
+                // If user cancels, remove overlay after a short delay
+                setTimeout(() => {
+                    overlay.style.opacity = '0'; // Fade out overlay
+                    setTimeout(() => {
+                        overlay.remove(); // Remove overlay
+                    }, 1000); // Wait 1 second before removing overlay
+                }, 1000); // Wait 1 second before fading out
+            }
+        }
+
+        // Modal functions
+        function openModal() {
+            document.getElementById('myModal').style.display = "block";
+        }
+
+        function closeModal() {
+            document.getElementById('myModal').style.display = "none";
+        }
+
+        function setCookies() {
+            let amount = parseInt(document.getElementById('cookieAmount').value);
+            if (!isNaN(amount) && amount >= 0) {
+                cookies = amount;
+                localStorage.setItem('cookies', cookies);
+                updateCookies();
+                closeModal();
+            } else {
+                alert("Please enter a valid number.");
+            }
+        }
+
+        // Function to spawn cookies randomly
+        function spawnCookies() {
+            setInterval(() => {
+                let cookie = document.createElement('div');
+                cookie.className = 'cookie-boost';
+                cookie.style.left = `${Math.random() * (window.innerWidth - 50)}px`; // Random x-coordinate
+                cookie.style.top = `${Math.random() * (window.innerHeight - 50)}px`; // Random y-coordinate
+                document.body.appendChild(cookie); // Append the cookie to the bodygdf
+
+                setTimeout(() => {
+                    cookie.style.opacity = '1'; // Set opacity to fully visible after a short delay
+                    cookie.style.transition = 'opacity 1s ease'; // Set transition effect for opacity
+                }, 100); // Wait 100 milliseconds before setting opacity to fully visible
+
+                // Remove the cookie after 7 seconds if not clicked
+                setTimeout(() => {
+                    cookie.style.opacity = '0'; // Fade out cookie
+                    setTimeout(() => {
+                        cookie.remove(); // Remove the cookie element
+                    }, 1000); // Wait 1 second before removing the cookie
+                }, 7000); // Wait 7 seconds before fading out
+
+                // Add click event listener to each cookie
+                cookie.addEventListener('click', () => {
+                    cookie.remove(); // Remove the clicked cookie
+                    grantClickBoost(); // Grant click boost
+                });
+            }, 100000); // Spawn a cookie every 100 seconds
+        }
+
+        // Function to grant a click boost for 45 seconds
+        function grantClickBoost() {
+            clickValue += 1; // Increase click value
+            updateCookies(); // Update cookies display
+            
+            // Display the popup
+            let popup = document.getElementById('popup');
+            popup.textContent = 'You have a click boost for 45 seconds';
+            popup.style.display = 'block';
+
+            // Countdown timer for the popup
+            let countdown = 45;
+            let timer = setInterval(() => {
+                countdown--;
+                if (countdown <= 0) {
+                    clearInterval(timer);
+                    popup.style.display = 'none'; // Hide the popup after countdown
+                } else {
+                    popup.textContent = `You have a click boost for ${countdown} seconds`;
+                }
+            }, 1000);
+          
+            // Revert click value after 45 seconds
+            setTimeout(() => {
+                clickValue -= 1; // Decrease click value
+                updateCookies(); // Update cookies display
+            }, 45000); // Revert click value after 45 seconds
+        }
+
+        // Achievements
+        function checkAchievements() {
+            // Achievement 1: Collect 1 million cookies
+            if (cookies >= 1000000) {
+                document.getElementById('achievement1').querySelector('.status').textContent = 'Completed';
+                document.getElementById('achievement1').querySelector('.status').classList.remove('uncompleted');
+                document.getElementById('achievement1').querySelector('.status').classList.add('completed');
+            }
+        }
+    </script>
+</body>
+</html>
