@@ -1,59 +1,68 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+      <link rel="icon" href="https://i.ibb.co/7X4py45/download-1.png">
+
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cookie Clicker</title>
     <style>
+body.special-event {
+    background-color: gold;
+    transition: background-color 1s ease; /* Smooth transition for background color change */
+}
+body {
+    overflow: hidden;
+}
+body.fade-out {
+    background-color: ''; /* Reset background color */
+    transition: background-color 1s ease; /* Smooth transition for background color change */
+}
+.cookie-rain {
+    position: absolute;
+    width: 45px; /* Adjust cookie width */
+    height: 45px; /* Adjust cookie height */
+    background-image: url('https://i.ibb.co/7X4py45/download-1.png'); /* Replace 'your_custom_image_url_here' with your image URL */
+    background-size: cover;
+    border-radius: 50%; /* Make it round */
+    z-index: 1000; /* Ensure it's above other content */
+    animation: fall 3s linear; /* Fall animation */
+}
+
+@keyframes fall {
+    0% {
+        top: -50px; /* Start position above the screen */
+        opacity: 1; /* Initially transparent */
+    }
+    100% {
+        top: 100%; /* End position at the bottom of the screen */
+        opacity: 0.5; /* Fully visible */
+    }
+}
+
+
         body {
             font-family: Arial, sans-serif;
             text-align: center;
+            margin: 0;
+            padding-bottom: 50px; /* Add some bottom padding to prevent content from being covered by footer */
+        }
+        .container {
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            height: 100vh;
-            margin: 0;
+            min-height: 100vh;
             transition: background-color 1s ease; /* Smooth transition for background color change */
             position: relative;
-        }
-        .input-container {
-            display: flex;
-            align-items: center;
-            margin-bottom: 10px;
-        }
-        .input-container label {
-            margin-right: 10px;
-        }
-        #cookieName {
-            padding: 8px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            font-size: 16px;
-        }
-        .button-container {
-            margin-top: 10px;
-        }
-        .button-container button {
-            padding: 10px 20px;
-            font-size: 16px;
-            background-color: #4CAF50;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            margin-right: 10px;
-            transition: background-color 0.3s;
-        }
-        .button-container button:hover {
-            background-color: #45a049;
+            padding: 20px; /* Adjust container padding for smaller screens */
         }
         #reset-btn {
             position: absolute;
             top: 10px;
             left: 10px;
             padding: 8px 16px;
-            font-size: 14px;
+            font-size: 14px; /* Decrease font size for reset button */
             background-color: #f44336;
             color: white;
             border: none;
@@ -61,18 +70,58 @@
             cursor: pointer;
             transition: background-color 0.3s;
         }
-        #reset-btn:hover {
-            background-color: #d32f2f;
+        h1 {
+            font-size: 24px; /* Decrease font size for heading */
+        }
+        .input-container {
+            display: flex;
+            align-items: center;
+            flex-direction: column; /* Stack input elements vertically on smaller screens */
+            margin-bottom: 20px; /* Increase margin for better spacing */
+        }
+        .input-container label {
+            margin-right: 10px;
+        }
+        #cookieName {
+            padding: 6px; /* Adjust input padding */
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 14px; /* Decrease font size for input */
+        }
+        .button-container {
+            margin-top: 10px;
+            flex-direction: column; /* Stack buttons vertically on smaller screens */
+        }
+        .button-container button {
+            padding: 8px 16px; /* Adjust button padding */
+            font-size: 14px; /* Decrease font size for buttons */
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+            transition: background-color 0.3s;
+        }
+        .button-container button:hover {
+            background-color: #45a049;
+        }
+        #cookies {
+            font-size: 18px; /* Decrease font size for cookie count */
+            margin-bottom: 20px;
         }
         #cookie {
-            width: 200px;
-            height: 200px;
-            background-image: url('https://i.ibb.co/7X4py45/download-1.png'); /* Replace 'your_custom_image_url_here' with your image URL */
-            background-size: cover;
-            border-radius: 50%; /* Make it round */
-            margin-bottom: 20px;
-            transition: transform 0.1s; /* Smooth transition */
-        }
+        width: 120px; /* Decrease cookie size for smaller screens */
+        height: 120px;
+        background-image: url('https://i.ibb.co/7X4py45/download-1.png'); /* Replace 'your_custom_image_url_here' with your image URL */
+        background-size: cover;
+        border-radius: 50%; /* Make it round */
+        margin: 0 auto; /* Center horizontally */
+        cursor: pointer;
+        transition: transform 0.1s; /* Smooth transition */
+        animation: clickAnimation 0.1s; /* Add click animation */
+    }
+
         #cookie:hover {
             cursor: pointer;
             transform: scale(1.05); /* Scale up on hover */
@@ -85,10 +134,7 @@
             50% { transform: scale(1.2); }
             100% { transform: scale(1); }
         }
-        #cookies {
-            font-size: 24px;
-            margin-bottom: 20px;
-        }
+        
         #shop {
             text-align: center; /* Center the content */
             margin-bottom: 20px; /* Add some bottom margin for spacing */
@@ -97,14 +143,15 @@
             margin-bottom: 10px; /* Add margin below the header */
         }
         .boost-btn {
-            padding: 10px 20px;
-            font-size: 16px;
+            padding: 8px 16px; /* Adjust button padding */
+            font-size: 14px; /* Decrease font size for buttons */
             background-color: #4CAF50;
             color: white;
             border: none;
             border-radius: 5px;
             cursor: pointer;
             margin: 5px;
+            transition: background-color 0.3s;
         }
         .boost-btn:hover {
             background-color: #45a049;
@@ -127,6 +174,8 @@
             border: 1px solid #888;
             width: 80%;
             border-radius: 10px;
+            font-size: 16px;
+            width: 90%; /* Adjust modal width */
         }
         .close {
             color: #aaa;
@@ -147,16 +196,16 @@
         .modal-input {
             display: block;
             width: 100%;
-            padding: 8px;
+            padding: 6px; /* Adjust input padding */
             margin-bottom: 10px;
             border: 1px solid #ccc;
             border-radius: 5px;
             box-sizing: border-box;
-            font-size: 16px;
+            font-size: 14px; /* Decrease font size for modal input */
         }
         .modal-btn {
-            padding: 10px 20px;
-            font-size: 16px;
+            padding: 8px 16px; /* Adjust button padding */
+            font-size: 14px; /* Decrease font size for modal buttons */
             background-color: #4CAF50;
             color: white;
             border: none;
@@ -196,24 +245,31 @@
             right: 20px;
             background-color: rgba(0, 0, 0, 0.8);
             color: white;
-            padding: 10px 20px;
+            padding: 8px 16px; /* Adjust popup padding */
             border-radius: 5px;
-            font-size: 16px;
+            font-size: 14px; /* Decrease font size for popup */
             display: none;
         }
         .achievements {
             margin-top: 20px;
-            text-align: middle; /* Align text to the left */
+            text-align: center; /* Center the content */
+            max-width: 600px; /* Limit width for better readability on larger screens */
+            margin-left: auto; /* Align to the center */
+            margin-right: auto; /* Align to the center */
+            font-size: 14px; /* Decrease font size for achievements */
         }
         .achievement {
             margin-bottom: 10px;
-            padding: 10px;
+            padding: 8px; /* Adjust achievement padding */
             background-color: #f0f0f0;
             border-radius: 5px;
             display: flex;
             justify-content: space-between;
             align-items: center;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Add a subtle shadow */
+            flex-direction: column; /* Stack achievement elements vertically on smaller screens */
+            text-align: left; /* Align text to the left */
+            padding: 15px; /* Increase padding for better spacing */
         }
         .achievement-text {
             flex-grow: 1; /* Let the text occupy remaining space */
@@ -224,10 +280,20 @@
         .uncompleted {
             color: red;
         }
+        @media screen and (max-width: 600px) {
+            #cookie {
+                width: 100px; /* Decrease cookie size for smaller screens */
+                height: 100px;
+            }
+        }
     </style>
 </head>
 <body>
     <!-- Your HTML content here -->
+    <audio id="clickSound">
+        <source src="click-sound.mp3" type="audio/mpeg">
+        Your browser does not support the audio element.
+    </audio>
     <button id="reset-btn" onclick="resetData()">Reset Data</button>
     <h1>Knock Off Cookie Clicker</h1>
     <div class="input-container">
@@ -242,11 +308,11 @@
     <div id="cookie" onclick="clickCookie()"></div>
     <div id="shop">
         <h2>Shop</h2>
-        <button class="boost-btn" onclick="buyBoost(1)">Buy Boost 1 (+1 per click) - Cost: 10 cookies</button>
-        <button class="boost-btn" onclick="buyBoost(2)">Buy Boost 2 (+2 per click) - Cost: 20 cookies</button>
-        <button class="boost-btn" onclick="buyBoost(3)">Buy Boost 3 (+3 per click) - Cost: 30 cookies</button>
-        <button class="boost-btn" onclick="buyHugeBoost()">Buy Huge Boost (+10,000 per click) - Cost: 1,000,000 cookies</button>
-        <button class="boost-btn" onclick="buyAutoclicker()">Buy Autoclicker (Clicks once every 3 seconds) - Cost: 1,000 cookies</button>
+        <button class="boost-btn" onclick="buyBoost(1)">Buy Boost 1 (+1 per click) - Cost: 75 cookies</button>
+        <button class="boost-btn" onclick="buyBoost(2)">Buy Boost 2 (+2 per click) - Cost: 150 cookies</button>
+        <button class="boost-btn" onclick="buyBoost(3)">Buy Boost 3 (+3 per click) - Cost: 250 cookies</button>
+        <button class="boost-btn" onclick="buyHugeBoost()">Buy Huge Boost (+10,000 per click) - Cost: 10,000,000 cookies</button>
+        <button class="boost-btn" onclick="buyAutoclicker()">Buy Autoclicker (Clicks once every 3 seconds) - Cost: 1,500 cookies</button>
     </div>
     <div id="myModal" class="modal">
         <div class="modal-content">
@@ -305,43 +371,87 @@
 
         // Function to trigger a special event
         function triggerSpecialEvent() {
-            specialEventTriggered = true; // Set the flag to true
-            document.body.style.backgroundColor = 'gold'; // Change background color to gold
+    if (!specialEventTriggered) {
+        specialEventTriggered = true;
+        let duration = 3000; // Duration of the special event
+        let fadeInDuration = 750; // Duration of fade in
+        let fadeOutDuration = 750; // Duration of fade out
+        let body = document.body;
+
+        // Fade in
+        body.style.transition = `background-color ${fadeInDuration}ms ease-in`;
+        body.style.backgroundColor = 'rgba(255, 215, 0, 0.5)'; // Gold with 50% opacity
+
+        // Fade out after 'duration' milliseconds
+        setTimeout(() => {
+            // Fade out
+            body.style.transition = `background-color ${fadeOutDuration}ms ease-out`;
+            body.style.backgroundColor = '';
+            
+            // Reset the special event after 'fadeOutDuration' milliseconds
             setTimeout(() => {
-                document.body.style.backgroundColor = ''; // Reset background color after 3 seconds
-            }, 3000);
-        }
+                specialEventTriggered = false;
+            }, fadeOutDuration);
+        }, duration);
+    }
+}
 
-        function clickCookie() {
-            cookies += clickValue;
-            updateCookies();
-            document.getElementById('cookie').classList.add('clicked'); // Add animation class
-            setTimeout(() => {
-                document.getElementById('cookie').classList.remove('clicked'); // Remove animation class after 0.2s
-            }, 200);
 
-            // Check if special event should trigger
-            if (cookies >= 1000000 && !specialEventTriggered) {
-                triggerSpecialEvent();
-            }
-        }
 
-        function buyBoost(boost) {
-            let cost = boost * 10;
-            if (cookies >= cost) {
-                clickValue += boost;
-                cookies -= cost;
-                updateCookies();
-                localStorage.setItem('clickValue', clickValue);
-            } else {
-                alert("Not enough cookies!");
-            }
-        }
+
+
+function clickCookie() {
+    cookies += clickValue;
+    updateCookies();
+    document.getElementById('cookie').classList.add('clicked'); // Add animation class
+    setTimeout(() => {
+        document.getElementById('cookie').classList.remove('clicked'); // Remove animation class after 0.2s
+    }, 200);
+
+    // Check if special event should trigger
+    if (cookies >= 1000000 && !specialEventTriggered) {
+        triggerSpecialEvent();
+        specialEventTriggered = true; // Set the flag to true to ensure it only happens once
+    }
+
+    // Play click sound
+    var clickSound = document.getElementById('clickSound');
+    clickSound.currentTime = 0; // Reset audio to the beginning
+    clickSound.play();
+}
+
+
+function buyBoost(boost) {
+    let cost;
+    // Set the new cost based on your desired logic
+    switch (boost) {
+        case 1:
+            cost = 75; // New cost for Boost 1
+            break;
+        case 2:
+            cost = 150; // New cost for Boost 2
+            break;
+        case 3:
+            cost = 250; // New cost for Boost 3
+            break;
+        default:
+            return; // Return if the boost level is invalid
+    }
+
+    if (cookies >= cost) {
+        clickValue += boost;
+        cookies -= cost;
+        updateCookies();
+        localStorage.setItem('clickValue', clickValue);
+    } else {
+        alert("Not enough cookies!");
+    }
+}
 
         function buyHugeBoost() {
-            if (cookies >= 1000000) {
+            if (cookies >= 10000000) {
                 clickValue += 10000;
-                cookies -= 1000000;
+                cookies -= 10000000;
                 updateCookies();
                 localStorage.setItem('clickValue', clickValue);
             } else {
@@ -350,7 +460,7 @@
         }
 
         function buyAutoclicker() {
-            let cost = 1000;
+            let cost = 1500;
             if (cookies >= cost) {
                 cookies -= cost;
                 updateCookies();
@@ -518,6 +628,8 @@
             clickValue += 1; // Increase click value
             updateCookies(); // Update cookies display
             
+            spawnCookiesRain();
+
             // Display the popup
             let popup = document.getElementById('popup');
             popup.textContent = 'You have a click boost for 45 seconds';
@@ -551,6 +663,24 @@
                 document.getElementById('achievement1').querySelector('.status').classList.add('completed');
             }
         }
+
+ // Function to spawn cookies
+function spawnCookiesRain() {
+    // Start timer for 45 seconds
+    setTimeout(() => {
+        // Remove all falling cookies after 45 seconds
+        location.reload(); // Reload the page after 45 seconds
+        }, 46000);
+
+    setInterval(() => {
+        let cookie = document.createElement('div');
+        cookie.className = 'cookie-rain';
+        cookie.style.left = `${Math.random() * (window.innerWidth - 50)}px`; // Random x-coordinate
+        cookie.style.top = '-50px'; // Start above the screen
+        document.body.appendChild(cookie); // Append the cookie to the body
+    }, 235); // Spawn a cookie every
+}
+
     </script>
 </body>
 </html>
